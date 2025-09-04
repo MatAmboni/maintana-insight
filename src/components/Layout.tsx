@@ -1,0 +1,97 @@
+import { Outlet, Link, useLocation } from "react-router-dom";
+import { 
+  LayoutDashboard, 
+  ClipboardList, 
+  AlertTriangle, 
+  Wrench,
+  Menu,
+  Settings 
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
+const navigation = [
+  { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Service Orders", href: "/orders", icon: ClipboardList },
+  { name: "Risk Analysis", href: "/risks", icon: AlertTriangle },
+  { name: "Equipment", href: "/equipment", icon: Wrench },
+];
+
+export function Layout() {
+  const location = useLocation();
+
+  const isActive = (href: string) => {
+    return href === "/" ? location.pathname === "/" : location.pathname.startsWith(href);
+  };
+
+  const NavLinks = () => (
+    <>
+      {navigation.map((item) => {
+        const Icon = item.icon;
+        return (
+          <Link
+            key={item.name}
+            to={item.href}
+            className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+              isActive(item.href)
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            }`}
+          >
+            <Icon className="h-5 w-5" />
+            <span>{item.name}</span>
+          </Link>
+        );
+      })}
+    </>
+  );
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b bg-card">
+        <div className="flex h-16 items-center px-4">
+          {/* Mobile menu */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" className="md:hidden">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-64">
+              <div className="flex flex-col space-y-2 mt-4">
+                <NavLinks />
+              </div>
+            </SheetContent>
+          </Sheet>
+
+          {/* Logo */}
+          <div className="flex items-center space-x-4 ml-4 md:ml-0">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Settings className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <h1 className="text-xl font-semibold">MaintenancePro</h1>
+            </div>
+          </div>
+
+          {/* Desktop navigation */}
+          <nav className="hidden md:flex items-center space-x-2 ml-8">
+            <NavLinks />
+          </nav>
+
+          <div className="ml-auto">
+            <Button variant="outline" size="sm">
+              User Profile
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <main className="flex-1">
+        <Outlet />
+      </main>
+    </div>
+  );
+}
