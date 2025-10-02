@@ -4,9 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Plus, 
-  Search, 
+import {
+  Plus,
+  Search,
   Filter,
   Zap,
   Wrench,
@@ -15,7 +15,7 @@ import {
   Calendar
 } from "lucide-react";
 
-const serviceOrders = [
+export const serviceOrders = [
   {
     id: "OS-2024-001",
     title: "Manutenção de Painel Elétrico",
@@ -31,7 +31,7 @@ const serviceOrders = [
   {
     id: "OS-2024-002",
     title: "Reparo de Esteira Transportadora",
-    equipment: "Esteira Transportadora B2", 
+    equipment: "Esteira Transportadora B2",
     type: "Mecânico",
     priority: "Médio",
     status: "Pendente",
@@ -44,7 +44,7 @@ const serviceOrders = [
     id: "OS-2024-003",
     title: "Verificação do Sistema HVAC",
     equipment: "Unidade HVAC C1",
-    type: "Mecânico", 
+    type: "Mecânico",
     priority: "Alto",
     status: "Concluído",
     assignee: "Miguel Oliveira",
@@ -66,7 +66,7 @@ const serviceOrders = [
   },
   {
     id: "OS-2024-005",
-    title: "Revisão Geral do Sistema de Bombeamento", 
+    title: "Revisão Geral do Sistema de Bombeamento",
     equipment: "Sistema de Bombeamento 3",
     type: "Mecânico",
     priority: "Crítico",
@@ -81,6 +81,8 @@ const serviceOrders = [
 export default function ServiceOrders() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
+
+
 
   const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
@@ -100,17 +102,22 @@ export default function ServiceOrders() {
     }
   };
 
-  const filteredOrders = serviceOrders.filter(order => {
-    const matchesSearch = order.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.equipment.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.assignee.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesTab = activeTab === "all" || 
-                      (activeTab === "electrical" && order.type === "Elétrico") ||
-                      (activeTab === "mechanical" && order.type === "Mecânico");
-    
-    return matchesSearch && matchesTab;
-  });
+  const filteredOrders = serviceOrders
+    .filter(order => {
+      const matchesSearch = order.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.equipment.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.assignee.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesTab = activeTab === "all" ||
+        (activeTab === "electrical" && order.type === "Elétrico") ||
+        (activeTab === "mechanical" && order.type === "Mecânico");
+
+      return matchesSearch && matchesTab;
+    })
+    .sort((a, b) => {
+      const priorityOrder = { "Crítico": 1, "Alto": 2, "Médio": 3 };
+      return (priorityOrder[a.priority] || 4) - (priorityOrder[b.priority] || 4);
+    });
 
   return (
     <div className="p-6 space-y-6">
@@ -175,26 +182,26 @@ export default function ServiceOrders() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm mb-4">{order.description}</p>
-                  
+
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div className="flex items-center space-x-2">
                       {order.type === "Elétrico" ? <Zap className="h-4 w-4" /> : <Wrench className="h-4 w-4" />}
                       <span className="text-muted-foreground">Equipamento:</span>
                       <span className="font-medium">{order.equipment}</span>
                     </div>
-                    
+
                     <div className="flex items-center space-x-2">
                       <User className="h-4 w-4" />
                       <span className="text-muted-foreground">Responsável:</span>
                       <span className="font-medium">{order.assignee}</span>
                     </div>
-                    
+
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4" />
                       <span className="text-muted-foreground">Criado:</span>
                       <span className="font-medium">{order.created}</span>
                     </div>
-                    
+
                     <div className="flex items-center space-x-2">
                       <Clock className="h-4 w-4" />
                       <span className="text-muted-foreground">Prazo:</span>

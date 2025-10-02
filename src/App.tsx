@@ -25,7 +25,6 @@ const App = () => (
             <Route path="risks" element={<RiskAnalysis />} />
             <Route path="equipment" element={<Equipment />} />
           </Route>
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

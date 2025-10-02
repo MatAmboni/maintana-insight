@@ -1,11 +1,11 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { 
-  LayoutDashboard, 
-  ClipboardList, 
-  AlertTriangle, 
+import {
+  LayoutDashboard,
+  ClipboardList,
+  AlertTriangle,
   Wrench,
   Menu,
-  Settings 
+  Settings
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -32,11 +32,10 @@ export function Layout() {
           <Link
             key={item.name}
             to={item.href}
-            className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-              isActive(item.href)
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-            }`}
+            className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${isActive(item.href)
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
           >
             <Icon className="h-5 w-5" />
             <span>{item.name}</span>
@@ -68,10 +67,12 @@ export function Layout() {
           {/* Logo */}
           <div className="flex items-center space-x-4 ml-4 md:ml-0">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Settings className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <h1 className="text-xl font-semibold">MaintenancePro</h1>
+              <img
+                src="/src/assets/logo-amboni-alimentos.png"
+                alt="Logo Amboni Alimentos"
+                className="h-7"
+              />
+              <h1 className="text-xl font-semibold">Manutenção Amboni</h1>
             </div>
           </div>
 
