@@ -11,10 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Service Orders", href: "/orders", icon: ClipboardList },
-  { name: "Risk Analysis", href: "/risks", icon: AlertTriangle },
-  { name: "Equipment", href: "/equipment", icon: Wrench },
+  { name: "Painel", href: "/", icon: LayoutDashboard },
+  { name: "Ordens de Serviço", href: "/orders", icon: ClipboardList },
+  { name: "Análise de Riscos", href: "/risks", icon: AlertTriangle },
+  { name: "Equipamentos", href: "/equipment", icon: Wrench },
 ];
 
 export function Layout() {
@@ -82,7 +82,7 @@ export function Layout() {
 
           <div className="ml-auto">
             <Button variant="outline" size="sm">
-              User Profile
+              Perfil do Usuário
             </Button>
           </div>
         </div>

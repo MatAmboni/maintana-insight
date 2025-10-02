@@ -16,28 +16,28 @@ import {
 
 const riskMetrics = [
   {
-    title: "Overall Risk Level",
-    value: "Medium",
+    title: "Nível Geral de Risco",
+    value: "Médio",
     score: 65,
     color: "text-status-warning",
     icon: Shield
   },
   {
-    title: "Electrical Risks",
-    value: "High", 
+    title: "Riscos Elétricos",
+    value: "Alto", 
     score: 78,
     color: "text-status-critical",
     icon: Zap
   },
   {
-    title: "Mechanical Risks",
-    value: "Low",
+    title: "Riscos Mecânicos",
+    value: "Baixo",
     score: 32,
     color: "text-status-operational", 
     icon: Wrench
   },
   {
-    title: "Predictive Accuracy",
+    title: "Precisão Preditiva",
     value: "94%",
     score: 94,
     color: "text-accent",
@@ -47,71 +47,71 @@ const riskMetrics = [
 
 const electricalRisks = [
   {
-    equipment: "Electrical Panel A3",
-    risk: "Overheating Detection",
-    severity: "Critical",
+    equipment: "Painel Elétrico A3",
+    risk: "Detecção de Superaquecimento",
+    severity: "Crítico",
     probability: 85,
-    impact: "High",
-    prediction: "48 hours",
-    factors: ["Temperature trending up", "Load above normal", "Age of components"]
+    impact: "Alto",
+    prediction: "48 horas",
+    factors: ["Temperatura em tendência de alta", "Carga acima do normal", "Idade dos componentes"]
   },
   {
-    equipment: "Motor Drive Unit 5",
-    risk: "Voltage Instability", 
-    severity: "High",
+    equipment: "Unidade de Acionamento 5",
+    risk: "Instabilidade de Voltagem", 
+    severity: "Alto",
     probability: 72,
-    impact: "Medium",
-    prediction: "3-5 days",
-    factors: ["Power fluctuations", "Grid instability", "Component wear"]
+    impact: "Médio",
+    prediction: "3-5 dias",
+    factors: ["Flutuações de energia", "Instabilidade da rede", "Desgaste de componentes"]
   },
   {
-    equipment: "Transformer T2",
-    risk: "Insulation Degradation",
-    severity: "Medium", 
+    equipment: "Transformador T2",
+    risk: "Degradação do Isolamento",
+    severity: "Médio", 
     probability: 45,
-    impact: "High",
-    prediction: "2-3 weeks",
-    factors: ["Moisture levels", "Temperature cycles", "Age"]
+    impact: "Alto",
+    prediction: "2-3 semanas",
+    factors: ["Níveis de umidade", "Ciclos de temperatura", "Idade"]
   }
 ];
 
 const mechanicalRisks = [
   {
-    equipment: "Conveyor Belt B2",
-    risk: "Belt Wear",
-    severity: "Medium",
+    equipment: "Esteira Transportadora B2",
+    risk: "Desgaste da Correia",
+    severity: "Médio",
     probability: 68,
-    impact: "Medium", 
-    prediction: "1-2 weeks",
-    factors: ["Usage hours", "Load patterns", "Maintenance history"]
+    impact: "Médio", 
+    prediction: "1-2 semanas",
+    factors: ["Horas de uso", "Padrões de carga", "Histórico de manutenção"]
   },
   {
-    equipment: "Pump System 3",
-    risk: "Bearing Failure",
-    severity: "Low",
+    equipment: "Sistema de Bombeamento 3",
+    risk: "Falha no Rolamento",
+    severity: "Baixo",
     probability: 25,
-    impact: "Low",
-    prediction: "4-6 weeks", 
-    factors: ["Vibration levels", "Temperature", "Lubrication schedule"]
+    impact: "Baixo",
+    prediction: "4-6 semanas", 
+    factors: ["Níveis de vibração", "Temperatura", "Programação de lubrificação"]
   },
   {
     equipment: "Compressor C1",
-    risk: "Pressure Drop",
-    severity: "Medium",
+    risk: "Queda de Pressão",
+    severity: "Médio",
     probability: 55,
-    impact: "Medium",
-    prediction: "10-14 days",
-    factors: ["Filter condition", "Seal integrity", "Operating pressure"]
+    impact: "Médio",
+    prediction: "10-14 dias",
+    factors: ["Condição do filtro", "Integridade do selo", "Pressão de operação"]
   }
 ];
 
 export default function RiskAnalysis() {
   const getSeverityColor = (severity: string) => {
     switch (severity.toLowerCase()) {
-      case "critical": return "bg-status-critical text-status-critical-foreground";
-      case "high": return "bg-status-maintenance text-status-maintenance-foreground";
-      case "medium": return "bg-status-warning text-status-warning-foreground";
-      case "low": return "bg-status-operational text-status-operational-foreground";
+      case "crítico": return "bg-status-critical text-status-critical-foreground";
+      case "alto": return "bg-status-maintenance text-status-maintenance-foreground";
+      case "médio": return "bg-status-warning text-status-warning-foreground";
+      case "baixo": return "bg-status-operational text-status-operational-foreground";
       default: return "bg-muted text-muted-foreground";
     }
   };
@@ -129,7 +129,7 @@ export default function RiskAnalysis() {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <CardTitle className="text-lg flex items-center space-x-2">
-              {type === "electrical" ? <Zap className="h-5 w-5" /> : <Wrench className="h-5 w-5" />}
+              {type === "elétrico" ? <Zap className="h-5 w-5" /> : <Wrench className="h-5 w-5" />}
               <span>{risk.equipment}</span>
             </CardTitle>
             <p className="text-muted-foreground mt-1">{risk.risk}</p>
@@ -140,7 +140,7 @@ export default function RiskAnalysis() {
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <div className="text-sm text-muted-foreground mb-1">Probability</div>
+            <div className="text-sm text-muted-foreground mb-1">Probabilidade</div>
             <div className="flex items-center space-x-2">
               <Progress value={risk.probability} className="flex-1" />
               <span className={`text-sm font-medium ${getRiskColor(risk.probability)}`}>
@@ -149,13 +149,13 @@ export default function RiskAnalysis() {
             </div>
           </div>
           <div>
-            <div className="text-sm text-muted-foreground mb-1">Impact</div>
+            <div className="text-sm text-muted-foreground mb-1">Impacto</div>
             <Badge variant="outline">{risk.impact}</Badge>
           </div>
         </div>
         
         <div>
-          <div className="text-sm text-muted-foreground mb-1">Predicted Timeline</div>
+          <div className="text-sm text-muted-foreground mb-1">Linha do Tempo Prevista</div>
           <div className="flex items-center space-x-2">
             <Activity className="h-4 w-4" />
             <span className="font-medium">{risk.prediction}</span>
@@ -163,7 +163,7 @@ export default function RiskAnalysis() {
         </div>
 
         <div>
-          <div className="text-sm text-muted-foreground mb-2">Risk Factors</div>
+          <div className="text-sm text-muted-foreground mb-2">Fatores de Risco</div>
           <div className="flex flex-wrap gap-1">
             {risk.factors.map((factor: string, index: number) => (
               <Badge key={index} variant="secondary" className="text-xs">
@@ -175,7 +175,7 @@ export default function RiskAnalysis() {
 
         <div className="pt-2">
           <Button size="sm" variant="outline" className="w-full">
-            Create Preventive Order
+            Criar Ordem Preventiva
           </Button>
         </div>
       </CardContent>
@@ -186,8 +186,8 @@ export default function RiskAnalysis() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Risk Analysis</h1>
-        <p className="text-muted-foreground">Predictive maintenance and risk assessment</p>
+        <h1 className="text-3xl font-bold">Análise de Riscos</h1>
+        <p className="text-muted-foreground">Manutenção preditiva e avaliação de riscos</p>
       </div>
 
       {/* Risk Overview Metrics */}
@@ -204,7 +204,7 @@ export default function RiskAnalysis() {
                 <div className="text-2xl font-bold mb-2">{metric.value}</div>
                 <Progress value={metric.score} className="h-2" />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Risk Score: {metric.score}/100
+                  Pontuação de Risco: {metric.score}/100
                 </p>
               </CardContent>
             </Card>
@@ -217,22 +217,22 @@ export default function RiskAnalysis() {
         <TabsList>
           <TabsTrigger value="electrical">
             <Zap className="h-4 w-4 mr-1" />
-            Electrical Risks ({electricalRisks.length})
+            Riscos Elétricos ({electricalRisks.length})
           </TabsTrigger>
           <TabsTrigger value="mechanical">
             <Wrench className="h-4 w-4 mr-1" />
-            Mechanical Risks ({mechanicalRisks.length})
+            Riscos Mecânicos ({mechanicalRisks.length})
           </TabsTrigger>
           <TabsTrigger value="environmental">
             <Thermometer className="h-4 w-4 mr-1" />
-            Environmental
+            Ambiental
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="electrical" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {electricalRisks.map((risk, index) => (
-              <RiskCard key={index} risk={risk} type="electrical" />
+              <RiskCard key={index} risk={risk} type="elétrico" />
             ))}
           </div>
         </TabsContent>
@@ -240,7 +240,7 @@ export default function RiskAnalysis() {
         <TabsContent value="mechanical" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {mechanicalRisks.map((risk, index) => (
-              <RiskCard key={index} risk={risk} type="mechanical" />
+              <RiskCard key={index} risk={risk} type="mecânico" />
             ))}
           </div>
         </TabsContent>
@@ -250,8 +250,8 @@ export default function RiskAnalysis() {
             <CardContent className="p-6">
               <div className="text-center text-muted-foreground">
                 <Thermometer className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-medium mb-2">Environmental Risk Analysis</h3>
-                <p>Environmental monitoring and risk assessment features will be available in the next update.</p>
+                <h3 className="text-lg font-medium mb-2">Análise de Risco Ambiental</h3>
+                <p>Recursos de monitoramento ambiental e avaliação de riscos estarão disponíveis na próxima atualização.</p>
               </div>
             </CardContent>
           </Card>
@@ -262,14 +262,14 @@ export default function RiskAnalysis() {
       <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
         <Button className="flex-1 md:flex-none">
           <AlertTriangle className="h-4 w-4 mr-2" />
-          Generate Risk Report
+          Gerar Relatório de Riscos
         </Button>
         <Button variant="outline" className="flex-1 md:flex-none">
           <Gauge className="h-4 w-4 mr-2" />
-          Configure Thresholds
+          Configurar Limites
         </Button>
         <Button variant="outline" className="flex-1 md:flex-none">
-          Export Analysis
+          Exportar Análise
         </Button>
       </div>
     </div>

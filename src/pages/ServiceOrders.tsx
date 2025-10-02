@@ -17,64 +17,64 @@ import {
 
 const serviceOrders = [
   {
-    id: "SO-2024-001",
-    title: "Electrical Panel Maintenance",
-    equipment: "Electrical Panel A3",
-    type: "Electrical",
-    priority: "Critical",
-    status: "In Progress",
-    assignee: "John Smith",
-    created: "2024-01-15",
-    dueDate: "2024-01-18",
-    description: "Routine maintenance and safety inspection of main electrical panel"
+    id: "OS-2024-001",
+    title: "Manutenção de Painel Elétrico",
+    equipment: "Painel Elétrico A3",
+    type: "Elétrico",
+    priority: "Crítico",
+    status: "Em Andamento",
+    assignee: "João Silva",
+    created: "15/01/2024",
+    dueDate: "18/01/2024",
+    description: "Manutenção de rotina e inspeção de segurança do painel elétrico principal"
   },
   {
-    id: "SO-2024-002",
-    title: "Conveyor Belt Repair",
-    equipment: "Conveyor Belt B2", 
-    type: "Mechanical",
-    priority: "Medium",
-    status: "Pending",
-    assignee: "Sarah Johnson",
-    created: "2024-01-16",
-    dueDate: "2024-01-20",
-    description: "Replace worn belt components and lubricate bearings"
+    id: "OS-2024-002",
+    title: "Reparo de Esteira Transportadora",
+    equipment: "Esteira Transportadora B2", 
+    type: "Mecânico",
+    priority: "Médio",
+    status: "Pendente",
+    assignee: "Sara Santos",
+    created: "16/01/2024",
+    dueDate: "20/01/2024",
+    description: "Substituir componentes desgastados da esteira e lubrificar rolamentos"
   },
   {
-    id: "SO-2024-003",
-    title: "HVAC System Check",
-    equipment: "HVAC Unit C1",
-    type: "Mechanical", 
-    priority: "High",
-    status: "Completed",
-    assignee: "Mike Wilson",
-    created: "2024-01-14",
-    dueDate: "2024-01-17",
-    description: "Complete system diagnostic and filter replacement"
+    id: "OS-2024-003",
+    title: "Verificação do Sistema HVAC",
+    equipment: "Unidade HVAC C1",
+    type: "Mecânico", 
+    priority: "Alto",
+    status: "Concluído",
+    assignee: "Miguel Oliveira",
+    created: "14/01/2024",
+    dueDate: "17/01/2024",
+    description: "Diagnóstico completo do sistema e substituição de filtros"
   },
   {
-    id: "SO-2024-004",
-    title: "Motor Drive Calibration",
-    equipment: "Motor Drive Unit 5",
-    type: "Electrical",
-    priority: "High",
-    status: "Assigned",
+    id: "OS-2024-004",
+    title: "Calibração de Acionamento de Motor",
+    equipment: "Unidade de Acionamento 5",
+    type: "Elétrico",
+    priority: "Alto",
+    status: "Atribuído",
     assignee: "Lisa Chen",
-    created: "2024-01-17",
-    dueDate: "2024-01-19",
-    description: "Recalibrate motor control parameters and test safety systems"
+    created: "17/01/2024",
+    dueDate: "19/01/2024",
+    description: "Recalibrar parâmetros de controle do motor e testar sistemas de segurança"
   },
   {
-    id: "SO-2024-005",
-    title: "Pump System Overhaul", 
-    equipment: "Pump System 3",
-    type: "Mechanical",
-    priority: "Critical",
-    status: "Planning",
-    assignee: "David Brown",
-    created: "2024-01-17",
-    dueDate: "2024-01-22",
-    description: "Complete pump disassembly, inspection, and rebuild"
+    id: "OS-2024-005",
+    title: "Revisão Geral do Sistema de Bombeamento", 
+    equipment: "Sistema de Bombeamento 3",
+    type: "Mecânico",
+    priority: "Crítico",
+    status: "Planejamento",
+    assignee: "David Costa",
+    created: "17/01/2024",
+    dueDate: "22/01/2024",
+    description: "Desmontagem completa da bomba, inspeção e reconstrução"
   }
 ];
 
@@ -84,18 +84,18 @@ export default function ServiceOrders() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
-      case "critical": return "bg-status-critical text-status-critical-foreground";
-      case "high": return "bg-status-maintenance text-status-maintenance-foreground";
-      case "medium": return "bg-status-warning text-status-warning-foreground";
+      case "crítico": return "bg-status-critical text-status-critical-foreground";
+      case "alto": return "bg-status-maintenance text-status-maintenance-foreground";
+      case "médio": return "bg-status-warning text-status-warning-foreground";
       default: return "bg-muted text-muted-foreground";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case "completed": return "bg-status-operational text-status-operational-foreground";
-      case "in progress": return "bg-accent text-accent-foreground";
-      case "assigned": return "bg-primary text-primary-foreground";
+      case "concluído": return "bg-status-operational text-status-operational-foreground";
+      case "em andamento": return "bg-accent text-accent-foreground";
+      case "atribuído": return "bg-primary text-primary-foreground";
       default: return "bg-secondary text-secondary-foreground";
     }
   };
@@ -106,8 +106,8 @@ export default function ServiceOrders() {
                          order.assignee.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesTab = activeTab === "all" || 
-                      (activeTab === "electrical" && order.type === "Electrical") ||
-                      (activeTab === "mechanical" && order.type === "Mechanical");
+                      (activeTab === "electrical" && order.type === "Elétrico") ||
+                      (activeTab === "mechanical" && order.type === "Mecânico");
     
     return matchesSearch && matchesTab;
   });
@@ -117,12 +117,12 @@ export default function ServiceOrders() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
         <div>
-          <h1 className="text-3xl font-bold">Service Orders</h1>
-          <p className="text-muted-foreground">Manage and track maintenance work orders</p>
+          <h1 className="text-3xl font-bold">Ordens de Serviço</h1>
+          <p className="text-muted-foreground">Gerencie e acompanhe ordens de trabalho de manutenção</p>
         </div>
         <Button className="w-fit">
           <Plus className="h-4 w-4 mr-2" />
-          Create New Order
+          Criar Nova Ordem
         </Button>
       </div>
 
@@ -131,7 +131,7 @@ export default function ServiceOrders() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search orders, equipment, or assignees..."
+            placeholder="Buscar ordens, equipamentos ou responsáveis..."
             className="pl-10"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -139,21 +139,21 @@ export default function ServiceOrders() {
         </div>
         <Button variant="outline">
           <Filter className="h-4 w-4 mr-2" />
-          Filters
+          Filtros
         </Button>
       </div>
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="all">All Orders ({serviceOrders.length})</TabsTrigger>
+          <TabsTrigger value="all">Todas as Ordens ({serviceOrders.length})</TabsTrigger>
           <TabsTrigger value="electrical">
             <Zap className="h-4 w-4 mr-1" />
-            Electrical ({serviceOrders.filter(o => o.type === "Electrical").length})
+            Elétrico ({serviceOrders.filter(o => o.type === "Elétrico").length})
           </TabsTrigger>
           <TabsTrigger value="mechanical">
             <Wrench className="h-4 w-4 mr-1" />
-            Mechanical ({serviceOrders.filter(o => o.type === "Mechanical").length})
+            Mecânico ({serviceOrders.filter(o => o.type === "Mecânico").length})
           </TabsTrigger>
         </TabsList>
 
@@ -178,26 +178,26 @@ export default function ServiceOrders() {
                   
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div className="flex items-center space-x-2">
-                      {order.type === "Electrical" ? <Zap className="h-4 w-4" /> : <Wrench className="h-4 w-4" />}
-                      <span className="text-muted-foreground">Equipment:</span>
+                      {order.type === "Elétrico" ? <Zap className="h-4 w-4" /> : <Wrench className="h-4 w-4" />}
+                      <span className="text-muted-foreground">Equipamento:</span>
                       <span className="font-medium">{order.equipment}</span>
                     </div>
                     
                     <div className="flex items-center space-x-2">
                       <User className="h-4 w-4" />
-                      <span className="text-muted-foreground">Assignee:</span>
+                      <span className="text-muted-foreground">Responsável:</span>
                       <span className="font-medium">{order.assignee}</span>
                     </div>
                     
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4" />
-                      <span className="text-muted-foreground">Created:</span>
+                      <span className="text-muted-foreground">Criado:</span>
                       <span className="font-medium">{order.created}</span>
                     </div>
                     
                     <div className="flex items-center space-x-2">
                       <Clock className="h-4 w-4" />
-                      <span className="text-muted-foreground">Due:</span>
+                      <span className="text-muted-foreground">Prazo:</span>
                       <span className="font-medium">{order.dueDate}</span>
                     </div>
                   </div>
