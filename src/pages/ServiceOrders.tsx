@@ -5,6 +5,39 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import {
   Plus,
   Search,
   Filter,
@@ -12,10 +45,10 @@ import {
   Wrench,
   Clock,
   User,
-  Calendar
+  Calendar as CalendarIcon
 } from "lucide-react";
 
-export const serviceOrders = [
+const initialServiceOrders = [
   {
     id: "OS-2024-001",
     title: "Manutenção de Painel Elétrico",
@@ -78,9 +111,31 @@ export const serviceOrders = [
   }
 ];
 
+export const serviceOrders = initialServiceOrders;
+
+const formSchema = z.object({
+  title: z.string().min(5, "Título deve ter no mínimo 5 caracteres").max(100, "Título deve ter no máximo 100 caracteres"),
+  equipment: z.string().min(3, "Equipamento deve ter no mínimo 3 caracteres"),
+  type: z.enum(["Elétrico", "Mecânico"], { required_error: "Selecione um tipo" }),
+  priority: z.enum(["Crítico", "Alto", "Médio", "Baixo"], { required_error: "Selecione uma prioridade" }),
+  status: z.enum(["Pendente", "Atribuído", "Em Andamento", "Concluído", "Planejamento"], { required_error: "Selecione um status" }),
+  assignee: z.string().min(3, "Responsável deve ter no mínimo 3 caracteres"),
+  dueDate: z.date({ required_error: "Selecione uma data de prazo" }),
+  description: z.string().min(10, "Descrição deve ter no mínimo 10 caracteres").max(500, "Descrição deve ter no máximo 500 caracteres"),
+});
+
 export default function ServiceOrders() {
+  const [orders, setOrders] = useState(initialServiceOrders);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      status: "Pendente",
+    },
+  });
 
 
 
@@ -102,7 +157,41 @@ export default function ServiceOrders() {
     }
   };
 
-  const filteredOrders = serviceOrders
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    const lastOrderNumber = orders.length > 0 
+      ? parseInt(orders[0].id.split('-')[2]) 
+      : 0;
+    const newOrderNumber = (lastOrderNumber + 1).toString().padStart(3, '0');
+    const newId = `OS-2024-${newOrderNumber}`;
+    
+    const today = new Date();
+    const createdDate = format(today, "dd/MM/yyyy", { locale: ptBR });
+    const dueDate = format(values.dueDate, "dd/MM/yyyy", { locale: ptBR });
+
+    const newOrder = {
+      id: newId,
+      title: values.title,
+      equipment: values.equipment,
+      type: values.type,
+      priority: values.priority,
+      status: values.status,
+      assignee: values.assignee,
+      created: createdDate,
+      dueDate: dueDate,
+      description: values.description,
+    };
+
+    setOrders([newOrder, ...orders]);
+    setDialogOpen(false);
+    form.reset();
+    
+    toast({
+      title: "Ordem criada com sucesso!",
+      description: `Ordem ${newId} foi criada e atribuída a ${values.assignee}.`,
+    });
+  };
+
+  const filteredOrders = orders
     .filter(order => {
       const matchesSearch = order.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.equipment.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -127,11 +216,210 @@ export default function ServiceOrders() {
           <h1 className="text-3xl font-bold">Ordens de Serviço</h1>
           <p className="text-muted-foreground">Gerencie e acompanhe ordens de trabalho de manutenção</p>
         </div>
-        <Button className="w-fit">
+        <Button className="w-fit" onClick={() => setDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Criar Nova Ordem
         </Button>
       </div>
+
+      {/* Create Order Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Criar Nova Ordem de Serviço</DialogTitle>
+            <DialogDescription>
+              Preencha os detalhes da nova ordem de serviço abaixo.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Título</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Manutenção de Painel Elétrico" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="equipment"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Equipamento</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Painel Elétrico A3" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o tipo" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Elétrico">Elétrico</SelectItem>
+                          <SelectItem value="Mecânico">Mecânico</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="priority"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Prioridade</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione a prioridade" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Crítico">Crítico</SelectItem>
+                          <SelectItem value="Alto">Alto</SelectItem>
+                          <SelectItem value="Médio">Médio</SelectItem>
+                          <SelectItem value="Baixo">Baixo</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Pendente">Pendente</SelectItem>
+                          <SelectItem value="Atribuído">Atribuído</SelectItem>
+                          <SelectItem value="Em Andamento">Em Andamento</SelectItem>
+                          <SelectItem value="Planejamento">Planejamento</SelectItem>
+                          <SelectItem value="Concluído">Concluído</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="assignee"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Responsável</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ex: João Silva" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="dueDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Data de Prazo</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "PPP", { locale: ptBR })
+                            ) : (
+                              <span>Selecione uma data</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <CalendarComponent
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                          initialFocus
+                          className="pointer-events-auto"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descrição</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Descreva os detalhes da ordem de serviço..."
+                        className="min-h-[100px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button type="submit">Criar Ordem</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
 
       {/* Search and Filters */}
       <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
@@ -153,14 +441,14 @@ export default function ServiceOrders() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="all">Todas as Ordens ({serviceOrders.length})</TabsTrigger>
+          <TabsTrigger value="all">Todas as Ordens ({orders.length})</TabsTrigger>
           <TabsTrigger value="electrical">
             <Zap className="h-4 w-4 mr-1" />
-            Elétrico ({serviceOrders.filter(o => o.type === "Elétrico").length})
+            Elétrico ({orders.filter(o => o.type === "Elétrico").length})
           </TabsTrigger>
           <TabsTrigger value="mechanical">
             <Wrench className="h-4 w-4 mr-1" />
-            Mecânico ({serviceOrders.filter(o => o.type === "Mecânico").length})
+            Mecânico ({orders.filter(o => o.type === "Mecânico").length})
           </TabsTrigger>
         </TabsList>
 
@@ -197,7 +485,7 @@ export default function ServiceOrders() {
                     </div>
 
                     <div className="flex items-center space-x-2">
-                      <Calendar className="h-4 w-4" />
+                      <CalendarIcon className="h-4 w-4" />
                       <span className="text-muted-foreground">Criado:</span>
                       <span className="font-medium">{order.created}</span>
                     </div>

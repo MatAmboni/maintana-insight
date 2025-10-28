@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import industrialHero from "@/assets/industrial-hero.jpg";
 import { serviceOrders } from "./ServiceOrders";
-import { useRoutes } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const metrics = [
   {
@@ -88,8 +88,7 @@ const criticalAlerts = [
 ];
 
 export default function Dashboard() {
-
-
+  const navigate = useNavigate();
 
   const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
@@ -199,11 +198,10 @@ export default function Dashboard() {
               </div>
             ))}
 
-            {/* Botão que leva para outra página */}
             <Button
               variant="outline"
               className="w-full"
-              // onClick={}
+              onClick={() => navigate('/orders')}
             >
               Ver Todas as Ordens
             </Button>
@@ -231,7 +229,7 @@ export default function Dashboard() {
                 </div>
               </div>
             ))}
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" onClick={() => navigate('/risks')}>
               Ver Análise de Riscos
             </Button>
           </CardContent>
