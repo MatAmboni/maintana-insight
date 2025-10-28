@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -129,6 +130,12 @@ export default function ServiceOrders() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+  
+  // Filter states
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -201,12 +208,41 @@ export default function ServiceOrders() {
         (activeTab === "electrical" && order.type === "Elétrico") ||
         (activeTab === "mechanical" && order.type === "Mecânico");
 
-      return matchesSearch && matchesTab;
+      // Filter by status
+      const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(order.status);
+      
+      // Filter by priority
+      const matchesPriority = selectedPriorities.length === 0 || selectedPriorities.includes(order.priority);
+      
+      // Filter by type
+      const matchesType = selectedTypes.length === 0 || selectedTypes.includes(order.type);
+
+      return matchesSearch && matchesTab && matchesStatus && matchesPriority && matchesType;
     })
     .sort((a, b) => {
       const priorityOrder = { "Crítico": 1, "Alto": 2, "Médio": 3 };
       return (priorityOrder[a.priority] || 4) - (priorityOrder[b.priority] || 4);
     });
+
+  const activeFilterCount = selectedStatuses.length + selectedPriorities.length + selectedTypes.length;
+
+  const clearFilters = () => {
+    setSelectedStatuses([]);
+    setSelectedPriorities([]);
+    setSelectedTypes([]);
+  };
+
+  const toggleFilter = (value: string, currentFilters: string[], setFilters: (filters: string[]) => void) => {
+    if (currentFilters.includes(value)) {
+      setFilters(currentFilters.filter(f => f !== value));
+    } else {
+      setFilters([...currentFilters, value]);
+    }
+  };
+
+  const statuses = ["Pendente", "Atribuído", "Em Andamento", "Concluído", "Planejamento"];
+  const priorities = ["Crítico", "Alto", "Médio", "Baixo"];
+  const types = ["Elétrico", "Mecânico"];
 
   return (
     <div className="p-6 space-y-6">
@@ -432,11 +468,105 @@ export default function ServiceOrders() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button variant="outline">
+        <Button variant="outline" onClick={() => setFilterDialogOpen(true)}>
           <Filter className="h-4 w-4 mr-2" />
           Filtros
+          {activeFilterCount > 0 && (
+            <Badge className="ml-2 bg-primary text-primary-foreground">
+              {activeFilterCount}
+            </Badge>
+          )}
         </Button>
       </div>
+
+      {/* Filter Dialog */}
+      <Dialog open={filterDialogOpen} onOpenChange={setFilterDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Filtros</DialogTitle>
+            <DialogDescription>
+              Selecione os filtros para refinar sua busca
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 py-4">
+            {/* Status Filter */}
+            <div className="space-y-3">
+              <h3 className="font-semibold text-sm">Status</h3>
+              <div className="space-y-2">
+                {statuses.map((status) => (
+                  <div key={status} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`status-${status}`}
+                      checked={selectedStatuses.includes(status)}
+                      onCheckedChange={() => toggleFilter(status, selectedStatuses, setSelectedStatuses)}
+                    />
+                    <label
+                      htmlFor={`status-${status}`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                    >
+                      {status}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Priority Filter */}
+            <div className="space-y-3">
+              <h3 className="font-semibold text-sm">Prioridade</h3>
+              <div className="space-y-2">
+                {priorities.map((priority) => (
+                  <div key={priority} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`priority-${priority}`}
+                      checked={selectedPriorities.includes(priority)}
+                      onCheckedChange={() => toggleFilter(priority, selectedPriorities, setSelectedPriorities)}
+                    />
+                    <label
+                      htmlFor={`priority-${priority}`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                    >
+                      {priority}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Type Filter */}
+            <div className="space-y-3">
+              <h3 className="font-semibold text-sm">Tipo</h3>
+              <div className="space-y-2">
+                {types.map((type) => (
+                  <div key={type} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`type-${type}`}
+                      checked={selectedTypes.includes(type)}
+                      onCheckedChange={() => toggleFilter(type, selectedTypes, setSelectedTypes)}
+                    />
+                    <label
+                      htmlFor={`type-${type}`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                    >
+                      {type}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={clearFilters}>
+              Limpar Filtros
+            </Button>
+            <Button onClick={() => setFilterDialogOpen(false)}>
+              Aplicar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
